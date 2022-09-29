@@ -8,11 +8,16 @@
 }
 body {
   background: #020019;
-  overflow-x: hidden;
   transition: 0.5s;
 }
 .asd {
   background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  border-radius: 10px;
+  border: none;
+}
+.asde {
+  background: rgba(168, 120, 245, 0.1);
   backdrop-filter: blur(5px);
   border-radius: 10px;
   border: none;
@@ -37,7 +42,7 @@ body {
 }
 .header {
   width: 100%;
-  /* height: 100vh; */
+  height: 100vh;
   background: #00122e;
   position: relative;
 }
@@ -98,7 +103,7 @@ nav ul li i:hover {
   width: 25px;
   margin-left: 40px;
 }
-.row {
+.rows {
   margin-top: 15px;
   display: flex;
   justify-content: space-between;
