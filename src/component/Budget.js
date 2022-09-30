@@ -1,53 +1,69 @@
 import React from "react";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useEffect, useState, } from "react";
 
 const Budget = () => {
+    const [admin, setadmin] = useState([]);
+    useEffect(() => {
+        if (localStorage.admin) {
+            let detail = JSON.parse(localStorage.admin);
+            setadmin(detail);
+        } else {
+            setadmin([]);
+        }
+    }, []);
     const formik = useFormik({
         initialValues: {
             expense: "",
             cost: "",
         },
         onSubmit: (values) => {
-            console.log(values);
-            //   let debo = JSON.parse(localStorage.getItem("call"));
-            //   if (values) {
-            //     for (const a of debo) {
-            //       let User = values;
-            //       if (a["email"] === User.email && a["password"] === User.password) {
-            //         localStorage.signinEmail = JSON.stringify(User.email);
-            //         localStorage.users = JSON.stringify(a);
-            //         // navigate("/Dashboard");
-            //       } else {
-            //         let err =
-            //           "User-Not-Found, Please check for mistakes and try again.";
-            //         // setError(err);
-            //       }
-            //     }
-            //   }
+            const newobj = [...admin, values];
+            setadmin(newobj);
+            localStorage.setItem("admin", JSON.stringify(newobj));
+            let ror = values.cost;
+            console.log(admin);
         },
         validationSchema: yup.object({
             expense: yup
                 .string()
                 .required("This field is required")
-                .min(4, "must be greater than three"),
+                .min(3, "must be greater than three"),
             cost: yup
+                .string()
+                .required("This field is required")
+                .min(3, "must be greater than three"),
+        }),
+    });
+    const formiks = useFormik({
+        initialValues: {
+            Budget: "",
+        },
+        onSubmit: (values) => {
+            console.log(values);
+
+        },
+        validationSchema: yup.object({
+            Budget: yup
                 .string()
                 .required("This field is required")
                 .min(4, "must be greater than two"),
         }),
     });
+    const dele = (index) => {
+        const third = admin.filter((item, ind) => index !== ind)
+        setadmin(third);
+        localStorage.setItem("admin", JSON.stringify(third));
+    }
     return (
         <>
             <div className="container">
                 <center>
-                    <h2 className="py-4 text-light">Calculate your Budget</h2>
+                    <h2 className="pt-4 text-light">Calculate your Budget</h2>
                 </center>
-                <div className="row mt-5">
-                    <div className="shadow asde col-12 p-4">
+                <div className="row my-4">
+                    <div className="shadow asde col-12 px-4 pt-4 pb-2">
                         <center>
                             <h3 className=" pb-2 text-light">Expense Table</h3>
                         </center>
@@ -77,7 +93,7 @@ const Budget = () => {
                                     </div>
                                     <div className="form-floating my-3">
                                         <input
-                                            type="text"
+                                            type="number"
                                             placeholder="Please Enter Your Expense Amount"
                                             className={
                                                 formik.errors.cost && formik.touched.cost
@@ -107,77 +123,71 @@ const Budget = () => {
                                 <div className="row">
                                     <div className="col-6">
                                         <b><p>Expense Title</p></b>
+                                        {admin.map((item, index) => (
+                                            <b key={index}><p style={{ textTransform: "capitalize" }}>{item.expense}<br /></p></b>
+                                        ))}
                                     </div>
                                     <div className="col-6">
-                                        <b><p>Expense Value($)</p></b>
+                                        <b><p>Expense Value(₦)</p></b>
+                                        {admin.map((item, index) => (
+                                            <b key={index}><p>₦ {item.cost}  <i className="fa fa-remove px-3" style={{ fontSize: "21px", color:"red" }} onClick={() => dele(index)} ></i><br /></p></b>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="shadow asde col-12 p-4">
+                    <div className="shadow asds col-12 px-4 pb-4 pt-2">
                         <center>
-                            <h3 className=" pb-2 text-light">Expense Table</h3>
+                            <h3 className="pb-2 text-light">Budget Table</h3>
                         </center>
                         <div className="row">
                             <div className="col col-md-4">
-                                <form action="" onSubmit={formik.handleSubmit}>
-                                    <div className="form-floating">
-                                        <input
-                                            type="text"
-                                            placeholder="Please Enter Your Expense Name"
-                                            className={
-                                                formik.errors.expense && formik.touched.expense
-                                                    ? "form-control is-invalid"
-                                                    : "form-control"
-                                            }
-                                            onChange={formik.handleChange}
-                                            style={{ backgroundColor: "#F5F7FA" }}
-                                            name="expense"
-                                            onBlur={formik.handleBlur}
-                                        />
-                                        {formik.touched.expense && (
-                                            <div style={{ color: "red" }} className="my-2">
-                                                {formik.errors.expense}
-                                            </div>
-                                        )}
-                                        <label>Please Enter Your Expense Name</label>
-                                    </div>
+                                <form action="" onSubmit={formiks.handleSubmit}>
                                     <div className="form-floating my-3">
                                         <input
-                                            type="text"
-                                            placeholder="Please Enter Your Expense Amount"
+                                            type="number"
+                                            placeholder="Please Enter Your Budget"
                                             className={
-                                                formik.errors.cost && formik.touched.cost
+                                                formiks.errors.Budget && formiks.touched.Budget
                                                     ? "form-control is-invalid"
                                                     : "form-control"
                                             }
-                                            onChange={formik.handleChange}
+                                            onChange={formiks.handleChange}
                                             style={{ backgroundColor: "#F5F7FA" }}
-                                            name="cost"
-                                            onBlur={formik.handleBlur}
+                                            name="Budget"
+                                            onBlur={formiks.handleBlur}
                                         />
-                                        {formik.touched.cost && (
+                                        {formiks.touched.Budget && (
                                             <div style={{ color: "red" }} className="my-2">
-                                                {formik.errors.cost}
+                                                {formiks.errors.Budget}
                                             </div>
                                         )}
-                                        <label>Please Enter Your Expense Amount</label>
+                                        <label>Please Enter Your Budget</label>
                                         <button
                                             type="submit"
                                             className="btn btn-success form-control py-3 mt-3 asd">
-                                            ADD EXPENSE
+                                            CALCULATE
                                         </button>
                                     </div>
                                 </form>
                             </div>
                             <div className="col-12 col-md-8 text-light">
                                 <div className="row">
-                                    <div className="col-6">
-                                        <b><p>Expense Title</p></b>
+                                    <div className="col-4">
+                                        <b><p>BUDGET</p></b>
+                                        <i className="far fa-user as"></i>
+                                        <p style={{ color: "green" }}>$ <span>0</span></p>
                                     </div>
-                                    <div className="col-6">
-                                        <b><p>Expense Value($)</p></b>
+                                    <div className="col-4">
+                                        <b><p>EXPENSE</p></b>
+                                        <i className="far fa-user as"></i>
+                                        <p style={{ color: "red" }}>$ <span>0</span></p>
+                                    </div>
+                                    <div className="col-4">
+                                        <b><p>BALANCE</p></b>
+                                        <i className="far fa-user as"></i>
+                                        <p style={{ color: "green" }}>$ <span>0</span></p>
                                     </div>
                                 </div>
                             </div>

@@ -19,8 +19,17 @@ body {
 .asde {
   background: rgba(168, 120, 245, 0.1);
   backdrop-filter: blur(5px);
-  border-radius: 10px;
+  border-radius: 10px 10px 0 0;
   border: none;
+}
+.asds {
+  background: rgba(168, 120, 245, 0.1);
+  backdrop-filter: blur(5px);
+  border-radius: 0 0 10px 10px;
+  border: none;
+}
+.as {
+  padding-left: 25px;
 }
 .sig {
   color: #1dcf9f;
