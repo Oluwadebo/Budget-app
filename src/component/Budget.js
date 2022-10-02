@@ -5,6 +5,7 @@ import { useEffect, useState, } from "react";
 
 const Budget = () => {
     const [admin, setadmin] = useState([]);
+    const [budget, setbudget] = useState([])
     useEffect(() => {
         if (localStorage.admin) {
             let detail = JSON.parse(localStorage.admin);
@@ -22,8 +23,6 @@ const Budget = () => {
             const newobj = [...admin, values];
             setadmin(newobj);
             localStorage.setItem("admin", JSON.stringify(newobj));
-            let ror = values.cost;
-            console.log(admin);
         },
         validationSchema: yup.object({
             expense: yup
@@ -33,7 +32,7 @@ const Budget = () => {
             cost: yup
                 .string()
                 .required("This field is required")
-                .min(3, "must be greater than three"),
+                .min(2, "must be greater than three"),
         }),
     });
     const formiks = useFormik({
@@ -41,14 +40,14 @@ const Budget = () => {
             Budget: "",
         },
         onSubmit: (values) => {
-            console.log(values);
-
+            const newobjs = [...budget, values];
+            setbudget(newobjs);
         },
         validationSchema: yup.object({
             Budget: yup
                 .string()
                 .required("This field is required")
-                .min(4, "must be greater than two"),
+                .min(2, "must be greater than two"),
         }),
     });
     const dele = (index) => {
@@ -56,6 +55,14 @@ const Budget = () => {
         setadmin(third);
         localStorage.setItem("admin", JSON.stringify(third));
     }
+    let sum = 0;
+    admin.forEach((val, index) => {
+        sum = sum + parseFloat(val.cost)
+    })
+    let balan = 0;
+    budget.forEach((val, index) => {
+        balan = parseFloat(val.Budget) - sum
+    })
     return (
         <>
             <div className="container">
@@ -130,7 +137,7 @@ const Budget = () => {
                                     <div className="col-6">
                                         <b><p>Expense Value(₦)</p></b>
                                         {admin.map((item, index) => (
-                                            <b key={index}><p>₦ {item.cost}  <i className="fa fa-remove px-3" style={{ fontSize: "21px", color:"red" }} onClick={() => dele(index)} ></i><br /></p></b>
+                                            <b key={index}><p>₦ {item.cost}  <i className="fa fa-remove px-3" style={{ fontSize: "21px", color: "red" }} onClick={() => dele(index)} ></i><br /></p></b>
                                         ))}
                                     </div>
                                 </div>
@@ -177,17 +184,19 @@ const Budget = () => {
                                     <div className="col-4">
                                         <b><p>BUDGET</p></b>
                                         <i className="far fa-user as"></i>
-                                        <p style={{ color: "green" }}>$ <span>0</span></p>
+                                        <p style={{ color: "green" }}>$ <span>
+                                            {budget.map((item, index) => (<span>{item.Budget}</span>))}
+                                        </span></p>
                                     </div>
                                     <div className="col-4">
                                         <b><p>EXPENSE</p></b>
                                         <i className="far fa-user as"></i>
-                                        <p style={{ color: "red" }}>$ <span>0</span></p>
+                                        <p style={{ color: "red" }}>$ <span>{sum}</span></p>
                                     </div>
                                     <div className="col-4">
                                         <b><p>BALANCE</p></b>
                                         <i className="far fa-user as"></i>
-                                        <p style={{ color: "green" }}>$ <span>0</span></p>
+                                        <p style={{ color: "green" }}>$ <span>{balan}</span></p>
                                     </div>
                                 </div>
                             </div>
