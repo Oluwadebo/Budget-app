@@ -5,10 +5,11 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-const Signup = () => {
+const Signin = () => {
   const navigate = useNavigate();
   const [allUser, setallUser] = useState([]);
   const [Error, setError] = useState("");
+
   useEffect(() => {
     if (localStorage.call) {
       let detail = JSON.parse(localStorage.call);
@@ -17,6 +18,7 @@ const Signup = () => {
       setallUser([]);
     }
   }, []);
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -50,6 +52,7 @@ const Signup = () => {
         .min(5, "password is weak, must be greater than five"),
     }),
   });
+
   const toggle = useRef();
   const i = useRef();
   const password = useRef();
@@ -65,11 +68,12 @@ const Signup = () => {
       toggle.current.classList.remove("hide");
     }
   };
+
   return (
     <>
       <div className="container">
-        <div className="row mx-auto my-5">
-          <div className="shadow col-12 col-md-8 mx-auto px-4 pb-3 asd">
+        <div className="row mx-auto mt-5">
+          <div className="shadow col-12 col-md-8 mx-auto px-4 pb-3 asd my-5">
             <h2 className="m-4 text-light">
               <b>
                 <i>SIGN-IN</i>
@@ -158,4 +162,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Signin;

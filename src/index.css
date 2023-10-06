@@ -171,3 +171,15 @@ nav ul li i:hover {
   margin-left: 5px;
   border-radius: 50%;
 }
+
+/* notfound */
+#message h1 {
+  color: #f80404;
+  font-weight: bold;
+  margin: 0 0 8px;
+}
+#message h2 {
+  font-weight: bold;
+  color: rgba(253, 253, 253, 0.7);
+  margin: 0 0 16px;
+}
