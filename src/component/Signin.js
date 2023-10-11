@@ -4,20 +4,28 @@ import { useFormik } from "formik";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import axios from 'axios';
+import { baseUrl } from "./endpoint";
 
 const Signin = () => {
   const navigate = useNavigate();
   const [allUser, setallUser] = useState([]);
   const [Error, setError] = useState("");
+  const [first, setfirst] = useState(true)
+  const [loader, setloader] = useState(false)
 
-  useEffect(() => {
-    if (localStorage.call) {
-      let detail = JSON.parse(localStorage.call);
-      setallUser(detail);
-    } else {
-      setallUser([]);
-    }
-  }, []);
+  let lower = new RegExp(`(?=.*[a-z])`);
+  let upper = new RegExp(`(?=.*[A-Z])`);
+  let number = new RegExp(`(?=.*[0-9])`);
+
+  // useEffect(() => {
+  //   if (localStorage.call) {
+  //     let detail = JSON.parse(localStorage.call);
+  //     setallUser(detail);
+  //   } else {
+  //     setallUser([]);
+  //   }
+  // }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -25,21 +33,40 @@ const Signin = () => {
       password: "",
     },
     onSubmit: (values) => {
-      let debo = JSON.parse(localStorage.getItem("call"));
-      if (values) {
-        for (const a of debo) {
-          let User = values;
-          if (a["email"] === User.email && a["password"] === User.password) {
-            localStorage.signinEmail = JSON.stringify(User.email);
-            localStorage.users = JSON.stringify(a);
-            navigate("/Dashboard");
+      setloader(prev => true)
+      axios.post(`${baseUrl}adminsignin`, values).then((credentials) => {
+        if (credentials) {
+          let Err = credentials.data.message;
+          if (Err == "Email not found") {
+            setloader(prev => false)
+            setError("Email not found");
+          } else if (Err == "Invaild password") {
+            setloader(prev => false)
+            setError("Invaild password");
           } else {
-            let err =
-              "User-Not-Found, Please check for mistakes and try again.";
-            setError(err);
+            if (Err == "Token generated") {
+              localStorage.Admin = credentials.data.token
+              setloader(prev => false)
+              navigate("/Admin")
+            }
           }
         }
-      }
+      })
+      // let debo = JSON.parse(localStorage.getItem("call"));
+      // if (values) {
+      //   for (const a of debo) {
+      //     let User = values;
+      //     if (a["email"] === User.email && a["password"] === User.password) {
+      //       localStorage.signinEmail = JSON.stringify(User.email);
+      //       localStorage.users = JSON.stringify(a);
+      //       navigate("/Dashboard");
+      //     } else {
+      //       let err =
+      //         "User-Not-Found, Please check for mistakes and try again.";
+      //       setError(err);
+      //     }
+      //   }
+      // }
     },
     validationSchema: yup.object({
       email: yup
@@ -131,9 +158,14 @@ const Signin = () => {
                 <label>&#x1F512;&nbsp; Your password</label>
                 <button
                   type="submit"
-                  className="btn btn-success form-control py-3 mt-3 asd"
+                  className="btn btn-success form-control py-3 mt-3"
                 >
-                  Sign-In
+                  <b>Sign-In</b>
+                  {loader && (
+                    <div className="spin">
+                      <div className="loader"></div>
+                    </div>
+                  )}
                 </button>
               </div>
               <div className="row mt-3">
