@@ -19,8 +19,7 @@ const Signup = () => {
 
   const formik = useFormik({
     initialValues: {
-      firstname: "",
-      Lastname: "",
+      Name: "",
       email: "",
       password: "",
     },
@@ -40,14 +39,10 @@ const Signup = () => {
       })
     },
     validationSchema: yup.object({
-      firstname: yup
+      Name: yup
         .string()
         .required("This field is required")
-        .min(4, "must be greater than three"),
-      Lastname: yup
-        .string()
-        .required("This field is required")
-        .min(3, "must be greater than two"),
+        .min(4, "provide your full name"),
       email: yup
         .string()
         .required("This field is required")
@@ -93,44 +88,23 @@ const Signup = () => {
               <div className="form-floating">
                 <input
                   type="text"
-                  placeholder="Your firstname"
+                  placeholder="Your Name"
                   className={
-                    formik.errors.firstname && formik.touched.firstname
+                    formik.errors.Name && formik.touched.Name
                       ? "form-control is-invalid"
                       : "form-control"
                   }
                   onChange={formik.handleChange}
                   style={{ backgroundColor: "#F5F7FA" }}
-                  name="firstname"
+                  name="Name"
                   onBlur={formik.handleBlur}
                 />
-                {formik.touched.firstname && (
+                {formik.touched.Name && (
                   <div style={{ color: "red" }} className="my-2">
-                    {formik.errors.firstname}
+                    {formik.errors.Name}
                   </div>
                 )}
-                <label>&#x1F464;&nbsp; Your firstname</label>
-              </div>
-              <div className="form-floating my-3">
-                <input
-                  type="text"
-                  placeholder="Your Lastname"
-                  className={
-                    formik.errors.Lastname && formik.touched.Lastname
-                      ? "form-control is-invalid"
-                      : "form-control"
-                  }
-                  onChange={formik.handleChange}
-                  style={{ backgroundColor: "#F5F7FA" }}
-                  name="Lastname"
-                  onBlur={formik.handleBlur}
-                />
-                {formik.touched.Lastname && (
-                  <div style={{ color: "red" }} className="my-2">
-                    {formik.errors.Lastname}
-                  </div>
-                )}
-                <label>&#x1F464;&nbsp; Your Lastname</label>
+                <label>&#x1F464;&nbsp; Your Name</label>
               </div>
               <div className="form-floating my-3">
                 <input

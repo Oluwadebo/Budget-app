@@ -1,11 +1,20 @@
 import React from "react";
 import * as yup from "yup";
 import { useFormik } from "formik";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState, } from "react";
+import axios from 'axios';
+import { baseUrl } from "./endpoint";
 
 const Budget = () => {
+    const navigate = useNavigate();
+
     const [admin, setadmin] = useState([]);
+    const [adminId, setadminId] = useState('')
     const [budget, setbudget] = useState([])
+    const token = localStorage.Admin;
+    const adminIds = localStorage.adminId;
+
     useEffect(() => {
         if (localStorage.admin) {
             let detail = JSON.parse(localStorage.admin);
@@ -14,6 +23,39 @@ const Budget = () => {
             setadmin([]);
         }
     }, []);
+    useEffect(() => {
+        if (token) {
+            axios.get(`${baseUrl}Admin`,
+                {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-type": "application/json",
+                        "Accept": "application/json"
+                    }
+                }).then((data) => {
+                    if (data) {
+                        let Err = data.data.message;
+                        if (Err == "Valid Token") {
+                            setadmin(data.data.result[0]);
+                            localStorage.adminId = data.data.result[0]._id
+                            setadminId(data.data.result[0]._id)
+                        } else {
+                            localStorage.removeItem('Admin')
+                            localStorage.removeItem('adminId')
+                            navigate("/Signin")
+                        }
+                    }
+                })
+            // axios.post(`${baseUrl}adminfiles`, { adminId: adminIds }).then((data) => {
+            //     if (data) {
+            //         setadminfiles(data.data.result);
+            //         setpageloader(prev => false)
+            //     }
+            // })
+        } else {
+            navigate("/Signin")
+        }
+    }, [])
     const formik = useFormik({
         initialValues: {
             expense: "",
