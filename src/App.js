@@ -15,8 +15,10 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<Signin/>} />
+          <Route path="/" element={<Signin />} />
+          <Route path="/Signup" element={<Signup />} />
           <Route path="/budget" element={<Budget />} />
+          <Route path="/Signin" element={<Navigate to="/" />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

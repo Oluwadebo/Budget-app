@@ -4,61 +4,41 @@ import { useFormik } from "formik";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import axios from 'axios';
+import { baseUrl } from "./endpoint";
 
 const Signup = () => {
   const navigate = useNavigate();
   const [allUser, setallUser] = useState([]);
   const [Error, setError] = useState("");
-  useEffect(() => {
-    if (localStorage.call) {
-      let detail = JSON.parse(localStorage.call);
-      setallUser(detail);
-    } else {
-      setallUser([]);
-    }
-  }, []);
+  const [loader, setloader] = useState(false)
+
+  let lower = new RegExp(`(?=.*[a-z])`);
+  let upper = new RegExp(`(?=.*[A-Z])`);
+  let number = new RegExp(`(?=.*[0-9])`);
+
   const formik = useFormik({
     initialValues: {
       firstname: "",
       Lastname: "",
       email: "",
       password: "",
-      gender: "",
-      score: "0",
     },
     onSubmit: (values) => {
-      let debo = JSON.parse(localStorage.getItem("call"));
-      setallUser(debo);
-      if (values) {
-        if (allUser == "") {
-          setallUser(allUser.push(values));
-          localStorage.setItem("call", JSON.stringify(allUser));
-          navigate("/Signin");
-        } else {
-          for (const a of allUser) {
-            let User = values;
-            if (a["email"] !== User.email && a["password"] !== User.password) {
-              setallUser(allUser.push(values));
-              localStorage.setItem("call", JSON.stringify(allUser));
-              navigate("/Signin");
-            } else {
-              if (
-                a["email"] === User.email &&
-                a["password"] === User.password
-              ) {
-                let err = "email and password already-in-use";
-                setError(err);
-              } else if (a["email"] === User.email) {
-                let err = "email-already-in-use";
-                setError(err);
-              } else if (a["password"] === User.password) {
-                let err = "password-already-in-use";
-                setError(err);
-              }
-            }
+      console.log(values);
+      setloader(prev => true)
+      axios.post(`${baseUrl}adminsignup`, values).then((credentials) => {
+        if (credentials) {
+          let Err = credentials.data.message;
+          if (Err == "Email already used") {
+            setloader(prev => false)
+            setError("Email already used");
+          } else {
+            setloader(prev => false)
+            navigate("/Signin")
           }
         }
-      }
+      })
     },
     validationSchema: yup.object({
       firstname: yup
@@ -73,11 +53,13 @@ const Signup = () => {
         .string()
         .required("This field is required")
         .email("must be a valid email"),
-      gender: yup.string().required("This field is required"),
       password: yup
         .string()
         .required("This field is required")
-        .min(5, "password is weak, must be greater than six"),
+        .matches(lower, "Must include lowerCase letter")
+        .matches(upper, "Must include upperCase letter")
+        .matches(number, "Must include a number")
+        .min(5, "must be greater than 5 charaters"),
     }),
   });
   const toggle = useRef();
@@ -173,29 +155,6 @@ const Signup = () => {
                 <label>&#x1F4E7;&nbsp; Your email</label>
               </div>
               <div className="form-floating my-3">
-                <select
-                  className={
-                    formik.errors.gender && formik.touched.gender
-                      ? "form-control is-invalid"
-                      : "form-control"
-                  }
-                  onChange={formik.handleChange}
-                  name="gender"
-                  onBlur={formik.handleBlur}
-                  style={{ backgroundColor: "#F5F7FA" }}
-                >
-                  <option>&#x1F4B7;&nbsp; Your gender</option>
-                  <option value="MALE">MALE</option>
-                  <option value="FEMALE">FEMALE</option>
-                </select>
-                {formik.touched.gender && (
-                  <div style={{ color: "red" }} className="my-2">
-                    {formik.errors.gender}
-                  </div>
-                )}
-                <label>&#x1F4B7;&nbsp; Your gender</label>
-              </div>
-              <div className="form-floating my-3">
                 <input
                   type="password"
                   placeholder="Your password"
@@ -227,9 +186,14 @@ const Signup = () => {
                 <label>&#x1F512;&nbsp; Your password</label>
                 <button
                   type="submit"
-                  className="btn btn-success form-control py-3 mt-3 asd"
+                  className="btn btn-success form-control py-3 mt-3"
                 >
-                  Sign-Up
+                  <b>Sign-Up</b>
+                  {loader && (
+                    <div className="spin">
+                      <div className="loader"></div>
+                    </div>
+                  )}
                 </button>
               </div>
               <div className="row mt-3">

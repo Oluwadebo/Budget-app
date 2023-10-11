@@ -1,7 +1,7 @@
 import React from "react";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from 'axios';
@@ -9,23 +9,12 @@ import { baseUrl } from "./endpoint";
 
 const Signin = () => {
   const navigate = useNavigate();
-  const [allUser, setallUser] = useState([]);
   const [Error, setError] = useState("");
-  const [first, setfirst] = useState(true)
   const [loader, setloader] = useState(false)
 
   let lower = new RegExp(`(?=.*[a-z])`);
   let upper = new RegExp(`(?=.*[A-Z])`);
   let number = new RegExp(`(?=.*[0-9])`);
-
-  // useEffect(() => {
-  //   if (localStorage.call) {
-  //     let detail = JSON.parse(localStorage.call);
-  //     setallUser(detail);
-  //   } else {
-  //     setallUser([]);
-  //   }
-  // }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -47,7 +36,7 @@ const Signin = () => {
             if (Err == "Token generated") {
               localStorage.Admin = credentials.data.token
               setloader(prev => false)
-              navigate("/Admin")
+              navigate("/budget")
             }
           }
         }
@@ -76,7 +65,10 @@ const Signin = () => {
       password: yup
         .string()
         .required("This field is required")
-        .min(5, "password is weak, must be greater than five"),
+        .matches(lower, "Must include lowerCase letter")
+        .matches(upper, "Must include upperCase letter")
+        .matches(number, "Must include a number")
+        .min(5, "password is weak, must be greater than 5 charaters"),
     }),
   });
 
