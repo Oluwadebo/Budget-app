@@ -41,21 +41,6 @@ const Signin = () => {
           }
         }
       })
-      // let debo = JSON.parse(localStorage.getItem("call"));
-      // if (values) {
-      //   for (const a of debo) {
-      //     let User = values;
-      //     if (a["email"] === User.email && a["password"] === User.password) {
-      //       localStorage.signinEmail = JSON.stringify(User.email);
-      //       localStorage.users = JSON.stringify(a);
-      //       navigate("/Dashboard");
-      //     } else {
-      //       let err =
-      //         "User-Not-Found, Please check for mistakes and try again.";
-      //       setError(err);
-      //     }
-      //   }
-      // }
     },
     validationSchema: yup.object({
       email: yup

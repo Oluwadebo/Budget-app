@@ -25,7 +25,6 @@ const Signup = () => {
       password: "",
     },
     onSubmit: (values) => {
-      console.log(values);
       setloader(prev => true)
       axios.post(`${baseUrl}adminsignup`, values).then((credentials) => {
         if (credentials) {
